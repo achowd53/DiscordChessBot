@@ -1,6 +1,6 @@
-from chessPieces.piece import ChessPiece
+from .piece import ChessPiece
 
-class Rook(ChessPiece):
+class Queen(ChessPiece):
     def __init__(self):
         pass
 
