@@ -46,6 +46,15 @@ async def movePiece(ctx, arg1: str, arg2: str):
         users_busy_playing.pop(ctx.author)
     # Reactionary message for promotion of piece if necessary
 
+@bot.command(name="mv castle")
+async def castle(ctx, arg1, arg2):
+    pass
+
+@bot.command(name="mv enpassante")
+# have to keep track of last move opponent made for this
+async def enpassante(ctx, arg1, arg2):
+    pass
+
 @bot.command(name="retire")
 async def retireGame(ctx):
     if ctx.author not in users_busy_playing:
