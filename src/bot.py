@@ -45,6 +45,8 @@ async def movePiece(ctx, arg1: str, arg2: str):
         users_busy_playing.pop(users_busy_playing[ctx.author][0])
         users_busy_playing.pop(ctx.author)
     # Reactionary message for promotion of piece if necessary
+    # Update it all
+    # Check for draws or checkmate
 
 @bot.command(name="mv castle")
 async def castle(ctx, arg1, arg2):

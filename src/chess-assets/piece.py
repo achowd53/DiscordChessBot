@@ -10,7 +10,7 @@ class ChessPiece:
     def updateValidMoves(self, board: dict, king_pos: str): #  Update set of all valid moves of chess piece
         # Get all possible movements of the piece itself
         # Check validity against if any pieces of yours are located at those spots
-        valid_moves = set()
+        self.valid_moves = set()
         self.board = board
         self.lookForChecks(king_pos)
     
