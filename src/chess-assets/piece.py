@@ -10,10 +10,18 @@ class ChessPiece:
     def updateValidMoves(self, board: dict, king_pos: str): #  Update set of all valid moves of chess piece
         # Get all possible movements of the piece itself
         # Check validity against if any pieces of yours are located at those spots
-        self.valid_moves = set()
         self.board = board
+        self.lookForKills()
         self.lookForChecks(king_pos)
     
+    def lookForKills(self): # Update set of all valid moves of chess piece to be spaces that won't land on ally
+        team_spaces = set()
+        for pos in self.valid_moves:
+            if self.board.get(pos, None):
+                if self.board[pos].color == self.getColor():
+                    team_spaces.add(pos)
+        self.valid_moves -= team_spaces
+
     def lookForChecks(self, king_pos: str):
         # Look through all valid moves and see if any result in check, remove them from valid moves
         non_check_moves = set()
