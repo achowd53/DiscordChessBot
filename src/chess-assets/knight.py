@@ -2,6 +2,7 @@ from .piece import ChessPiece
 
 class Knight(ChessPiece):
     def __init__(self):
+        self.piece = " knight"
         pass
     
     def updateValidMoves(self, board: dict, king_pos: str):

@@ -2,6 +2,7 @@ from .piece import ChessPiece
 
 class Bishop(ChessPiece):
     def __init__(self):
+        self.piece = " bishop"
         pass
 
     def updateValidMoves(self, board: dict, king_pos: str):
@@ -19,4 +20,3 @@ class Bishop(ChessPiece):
                 else:
                     break
         return super().updateValidMoves(board, king_pos)
-# Overload updateValidMoves

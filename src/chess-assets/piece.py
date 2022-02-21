@@ -1,8 +1,8 @@
 class ChessPiece:
-    def __init__(self, loc: str, color: str, piece: str):
+    def __init__(self, loc: str, color: str):
         self.loc = loc
         self.color = color
-        self.piece = piece
+        self.piece = None
         self.num_movements = 0
         self.valid_moves = set() #update whenever a piece moves after picture gets sent
         self.board = None # Internal memory of board state updated with update call

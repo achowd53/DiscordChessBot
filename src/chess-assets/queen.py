@@ -2,6 +2,7 @@ from .piece import ChessPiece
 
 class Queen(ChessPiece):
     def __init__(self):
+        self.piece = " queen"
         pass
     
     def updateValidMoves(self, board: dict, king_pos: str):
@@ -19,4 +20,3 @@ class Queen(ChessPiece):
                 else:
                     break
         return super().updateValidMoves(board, king_pos)
-# Overload updateValidMoves
