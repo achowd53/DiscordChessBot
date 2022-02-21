@@ -5,7 +5,7 @@ class King(ChessPiece):
         self.piece = " king"
         pass
     
-    def castle(self, loc):
+    def castle(self, loc): 
         pass
 
     def updateValidMoves(self, board: dict, king_pos: str):
