@@ -30,14 +30,17 @@ class ChessPiece:
         for pos in self.valid_moves:
             if self.piece == "king":
                 king_pos = pos
-            #### Optimize this with a dict containing {moved:[(piece,from,to),...],taken:[(piece,at)]} ####
-            action = {"moved":[self, self.loc, pos], "taken":[self.board[pos],pos] if self.board.get(pos, None) else []}
-            self.board[self.loc] = None
-            self.board[pos] = self 
+            action = {"moved":[[self, self.loc, pos]], "taken":[[self.board[pos],pos]] if self.board.get(pos, None) else []}
+            for piece, loc, new_loc in action["moved"]:
+                self.board[loc] = None
+                self.board[new_loc] = piece 
             if not self._isThreatened(king_pos):
                 non_check_moves.add(pos)
-            self.board[self.loc] = self
-            self.board[pos] = action["taken"][0] if action["taken"] else None
+            for piece, loc, new_loc in action["moved"]:
+                self.board[loc] = piece
+                self.board[new_loc] = None
+            for piece, loc in action["taken"]:
+                self.board[loc] = piece
         self.valid_moves = non_check_moves
 
     def moveTo(self, pos): # Move piece if possible and return board and pos moved to, otherwise return None

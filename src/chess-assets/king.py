@@ -6,13 +6,17 @@ class King(ChessPiece):
         pass
     
     def castle(self, side): #Castles on king or queenside and returns board, new position of king
-        if side == "king":
+        if side == "queen":
+            self.num_movements += 1
+            self.board["a"+self.getLoc[1]].num_movements += 1
             self.board["c"+self.getLoc[1]] = self.board["e"+self.getLoc[1]]
             self.board["d"+self.getLoc[1]] = self.board["a"+self.getLoc[1]]
             self.board["e"+self.getLoc[1]] = None
             self.board["a"+self.getLoc[1]] = None
             return self.board, "c"+self.getLoc[1]
         else:
+            self.num_movements += 1
+            self.board["h"+self.getLoc[1]].num_movements += 1
             self.board["g"+self.getLoc[1]] = self.board["e"+self.getLoc[1]]
             self.board["f"+self.getLoc[1]] = self.board["h"+self.getLoc[1]]
             self.board["e"+self.getLoc[1]] = None
