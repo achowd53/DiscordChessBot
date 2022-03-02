@@ -29,12 +29,14 @@ class ChessPiece:
         non_check_moves = set()
         for pos in self.valid_moves:
             if self.piece == "king":
-                king_pos = pos
+                king_pos_temp = pos
+            else:
+                king_pos_temp = king_pos
             action = {"moved":[[self, self.loc, pos]], "taken":[[self.board[pos],pos]] if self.board.get(pos, None) else []}
             for piece, loc, new_loc in action["moved"]:
                 self.board[loc] = None
                 self.board[new_loc] = piece 
-            if not self._isThreatened(king_pos):
+            if not self._isThreatened(king_pos_temp):
                 non_check_moves.add(pos)
             for piece, loc, new_loc in action["moved"]:
                 self.board[loc] = piece
