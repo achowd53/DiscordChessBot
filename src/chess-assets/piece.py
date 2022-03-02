@@ -17,6 +17,8 @@ class ChessPiece:
     def lookForKills(self): # Update set of all valid moves of chess piece to be spaces that won't land on ally
         team_spaces = set()
         for pos in self.valid_moves:
+            if pos in ["kc", "qc", "ep"]:
+                continue
             if self.board.get(pos, None):
                 if self.board[pos].color == self.getColor():
                     team_spaces.add(pos)
@@ -42,11 +44,18 @@ class ChessPiece:
         if pos not in self.valid_moves:
             return None, None
         else:
+            if pos == "kc":
+                self.castle("king")
+            elif pos == "qc":
+                self.castle("queen")
             self.board[self.loc] = None
             self.loc = pos
             self.board[self.loc] = self 
             self.num_movements += 1
             return self.board, pos
+
+    def castle(self, side): # Dummy function for castling
+        pass
 
     def getPiece(self): # Get piece type
         return self.piece
@@ -58,7 +67,7 @@ class ChessPiece:
         return "white" if self.color == "black" else "black"
 
     def getName(self): # Get full name of piece (color + type)
-        return self.piece + " " + self.color
+        return self.color + self.piece
 
     def getLoc(self): # Get current location of piece
         return self.loc

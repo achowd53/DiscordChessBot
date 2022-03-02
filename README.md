@@ -5,9 +5,8 @@ Art for Chess Pieces obtained from:
 - https://pixabay.com/vectors/chess-pieces-set-symbols-game-26774/
 
 Things to Do:
-- Add castling to move validity for king and complete method to do it
 - Add en passante to move validity for pawn and complete method to do it
-- Add to lookForChecks a way to see if doing either move will result in a check
+- Add to lookForChecks a way to see if castling or en passante will result in a check
 - Set up logic.py to set up the board using chess pieces and accept commands and run game
 - Set up skeleton for bot.py for how different commands should work
 

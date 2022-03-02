@@ -49,7 +49,7 @@ async def movePiece(ctx, arg1: str, arg2: str):
     # Check for draws or checkmate
 
 @bot.command(name="mv castle")
-async def castle(ctx, arg1, arg2):
+async def castle(ctx, arg1): #king, queen
     pass
 
 @bot.command(name="mv enpassante")
