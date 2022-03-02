@@ -1,6 +1,12 @@
 from random import shuffle
+from .chess_assets.bishop import Bishop
+from .chess_assets.king import King
+from .chess_assets.knight import Knight
+from .chess_assets.pawn import Pawn
+from .chess_assets.queen import Queen
+from .chess_assets.rook import Rook
 
-class ChessGame: # Promotion, En Passante not implemented
+class ChessGame: # En Passante not implemented
     
     def __init__(self, userA, userB):
         self.users = [str(userA), str(userB)]
@@ -14,13 +20,26 @@ class ChessGame: # Promotion, En Passante not implemented
     
     def initBoard(self): # Initializes board state
         self.board = {}
-        self.king_pos = {"b":"e1","w":"e8"}
+        self.king_pos = {"black":"e1","white":"e8"}
         for col in "abcdefgh":
-            self.board[col+"7"] = "wp"
-            self.board[col+"2"] = "bp"
-        for col, piece in list(zip("abcdefgh","rhbqkbhr")):
-            self.board[col+"8"] = "w"+piece
-            self.board[col+"1"] = "b"+piece
+            self.board[col+"7"] = Pawn(loc = col+"7", color = "white")
+            self.board[col+"2"] = Pawn(loc = col+"2", color = "black")
+        for pos in ["a1", "h1"]:
+            self.board[pos] = Rook(loc = pos, color = "black")
+        for pos in ["a8", "h8"]:
+            self.board[pos] = Rook(loc = pos, color = "white")
+        for pos in ["b1", "g1"]:
+            self.board[pos] = Knight(loc = pos, color = "black")
+        for pos in ["b8", "g8"]:
+            self.board[pos] = Knight(loc = pos, color = "white")
+        for pos in ["c1", "f1"]:
+            self.board[pos] = Bishop(loc = pos, color = "black")
+        for pos in ["c8", "f8"]:
+            self.board[pos] = Bishop(loc = pos, color = "white")
+        self.board["d1"] = King(loc = "d1", color = "black")
+        self.board["d8"] = King(loc = "d8", color = "white")
+        self.board["e1"] = Queen(loc = "e1", color = "black")
+        self.board["e8"] = Queen(loc = "e8", color = "white")
         
     def getCurrentPlayer(self):
         return self.users[self.turn]
@@ -64,169 +83,7 @@ class ChessGame: # Promotion, En Passante not implemented
         return -1, None
     
     def checkDraw(self, userA):
-        for space in self.board:
-            if self.board[space] != None and self.board[space][0] == self.getCurrentColor():
-                if self.board[space][1] == "r":
-                    if any(self.validateMove(space, chr(ord(space[0])-1)+space[1]),
-                           self.validateMove(space, chr(ord(space[0])+1)+space[1]),
-                           self.validateMove(space, space[0]+chr(ord(space[1])-1)),
-                           self.validateMove(space, space[0]+chr(ord(space[1])-1))):
-                        return False
-                elif self.board[space][1] == "p":
-                    if any(self.validateMove(space, chr(ord(space[0])-1)+chr(ord(space[1])-1)),
-                           self.validateMove(space, chr(ord(space[0])+1)+chr(ord(space[1])-1)),
-                           self.validateMove(space, space[0]+chr(ord(space[1])-1)),
-                           self.validateMove(space, chr(ord(space[0])-1)+chr(ord(space[1])+1)),
-                           self.validateMove(space, chr(ord(space[0])+1)+chr(ord(space[1])+1)),
-                           self.validateMove(space, space[0]+chr(ord(space[1])+1))):
-                        return False
-                elif self.board[space][1] == "h":
-                    if any(self.validateMove(space, chr(ord(space[0])-1)+chr(ord(space[1])-2)),
-                           self.validateMove(space, chr(ord(space[0])-2)+chr(ord(space[1])-1)),
-                           self.validateMove(space, chr(ord(space[0])+1)+chr(ord(space[1])-2)),
-                           self.validateMove(space, chr(ord(space[0])+2)+chr(ord(space[1])-1)),
-                           self.validateMove(space, chr(ord(space[0])-1)+chr(ord(space[1])+2)),
-                           self.validateMove(space, chr(ord(space[0])-2)+chr(ord(space[1])+1)),
-                           self.validateMove(space, chr(ord(space[0])+1)+chr(ord(space[1])+2)),
-                           self.validateMove(space, chr(ord(space[0])+2)+chr(ord(space[1])+1))):
-                        return False
-                elif self.board[space][1] == "b":
-                    if any(self.validateMove(space, chr(ord(space[0])-1)+chr(ord(space[1])-1)),
-                           self.validateMove(space, chr(ord(space[0])-1)+chr(ord(space[1])+1)),
-                           self.validateMove(space, chr(ord(space[0])+1)+chr(ord(space[1])+1)),
-                           self.validateMove(space, chr(ord(space[0])+1)+chr(ord(space[1])-1))):
-                        return False
-                else:
-                    if any(self.validateMove(space, chr(ord(space[0])-1)+chr(ord(space[1])-1)),
-                           self.validateMove(space, chr(ord(space[0])-1)+chr(ord(space[1]))),
-                           self.validateMove(space, chr(ord(space[0])-1)+chr(ord(space[1])+1)),
-                           self.validateMove(space, chr(ord(space[0]))+chr(ord(space[1])+1)),
-                           self.validateMove(space, chr(ord(space[0]))+chr(ord(space[1])-1)),
-                           self.validateMove(space, chr(ord(space[0])+1)+chr(ord(space[1])-1)),
-                           self.validateMove(space, chr(ord(space[0])+1)+chr(ord(space[1]))),
-                           self.validateMove(space, chr(ord(space[0])+1)+chr(ord(space[1])+1))):
-                        return False
-        return True
+        pass
 
     def inCheck(self, userA):
-        king_loc = self.king_pos[self.getCurrentColor()]
-        if self.getOtherColor()+"p" in [self.board.get(chr(ord(king_loc[0])+1)+chr(ord(king_loc[0])+(1 if self.getCurrentColor() == "b" else -1), None)),
-                                        self.board.get(chr(ord(king_loc[0])-1)+chr(ord(king_loc[0])+(1 if self.getCurrentColor() == "b" else -1), None))]:
-            return True
-        if any(self.getOtherColor()+"k" == self.board.get(x,None) for x in [chr(ord(king_loc[0])-1)+chr(ord(king_loc[1])-1),
-            chr(ord(king_loc[0])-1)+chr(ord(king_loc[1])), chr(ord(king_loc[0])-1)+chr(ord(king_loc[1])+1),
-            chr(ord(king_loc[0]))+chr(ord(king_loc[1])+1), chr(ord(king_loc[0]))+chr(ord(king_loc[1])-1),
-            chr(ord(king_loc[0])+1)+chr(ord(king_loc[1])-1), chr(ord(king_loc[0])+1)+chr(ord(king_loc[1])),
-            chr(ord(king_loc[0])+1)+chr(ord(king_loc[1])+1)]):
-            return True
-        if any(self.getOtherColor()+"h" == self.board.get(x, None) for x in [chr(ord(king_loc[0])-1)+chr(ord(king_loc[1])-2),
-            chr(ord(king_loc[0])-2)+chr(ord(king_loc[1])-1), chr(ord(king_loc[0])+1)+chr(ord(king_loc[1])-2),
-            chr(ord(king_loc[0])+2)+chr(ord(king_loc[1])-1), chr(ord(king_loc[0])-1)+chr(ord(king_loc[1])+2),
-            chr(ord(king_loc[0])-2)+chr(ord(king_loc[1])+1), chr(ord(king_loc[0])+1)+chr(ord(king_loc[1])+2),
-            chr(ord(king_loc[0])+2)+chr(ord(king_loc[1])+1)]):
-            return True
-        for i in range(1,8):
-            if self.board.get(king_loc[0] + chr(ord(king_loc[1])+i), None) in [self.getOtherColor()+"r",self.getOtherColor()+"q"] or\
-               self.board.get(king_loc[0] + chr(ord(king_loc[1])-i), None) in [self.getOtherColor()+"r",self.getOtherColor()+"q"] or\
-               self.board.get(chr(ord(king_loc[0])+i) + king_loc[1], None) in [self.getOtherColor()+"r",self.getOtherColor()+"q"] or\
-               self.board.get(chr(ord(king_loc[0])-i) + king_loc[1], None) in [self.getOtherColor()+"r",self.getOtherColor()+"q"] or\
-               self.board.get(chr(ord(king_loc[0])+i) + chr(ord(king_loc[1])+i), None) in [self.getOtherColor()+"b",self.getOtherColor()+"q"] or\
-               self.board.get(chr(ord(king_loc[0])+i) + chr(ord(king_loc[1])-i), None) in [self.getOtherColor()+"b",self.getOtherColor()+"q"] or\
-               self.board.get(chr(ord(king_loc[0])-i) + chr(ord(king_loc[1])+i), None) in [self.getOtherColor()+"b",self.getOtherColor()+"q"] or\
-               self.board.get(chr(ord(king_loc[0])-i) + chr(ord(king_loc[1])-i), None) in [self.getOtherColor()+"b",self.getOtherColor()+"q"]:
-                   return True
-        return False
-    
-    def validateMove(self, arg1, arg2): # See if movement of piece is valid for piece
-        if len(arg1) != 2 or len(arg2) != 2 or not('a' <= arg1[0].lower() <= 'h') or not('a' <= arg2[0].lower() <= 'h') or\
-        not('1' <= arg1[1] <= '8') or not('1' <= arg2[1] <= '8'):
-            return False
-        piece = self.board[arg1][1]
-        if piece == "p":
-            if self.board[arg1][0] == "b":
-                if chr(ord(arg1[0])-1)+chr(ord(arg1[1])+1) == arg2 or chr(ord(arg1[0])+1)+chr(ord(arg1[1])+1) == arg2:
-                    return self.board.get(arg2, None) != None
-                elif arg1[1] == "2" and arg1[0]+chr(ord(arg1[1])+2) == arg2:
-                    return self.board.get(arg2, None) == None
-                elif arg1[0]+chr(ord(arg1[1])+1) == arg2:
-                    return self.board.get(arg2, None) == None
-                return False
-            if self.board[arg1][0] == "w":
-                if chr(ord(arg1[0])-1)+chr(ord(arg1[1])-1) == arg2 or chr(ord(arg1[0])+1)+chr(ord(arg1[1])-1) == arg2:
-                    return self.board.get(arg2, None) != None
-                elif arg1[1] == "7" and arg1[0]+chr(ord(arg1[1])-2) == arg2:
-                    return self.board.get(arg2, None) == None
-                elif arg1[0]+chr(ord(arg1[1])-1) == arg2:
-                    return self.board.get(arg2, None) == None
-                return False
-        elif piece == "r":
-            if abs(ord(arg1[0])-ord(arg2[0])) ^ abs(ord(arg1[1])-ord(arg2[1])):
-                if abs(ord(arg1[0])-ord(arg2[0])):
-                    for c in range(min(ord(arg1[0]),ord(arg2[0]))+1, max(ord(arg1[0]),ord(arg2[0]))):
-                        if self.board.get(chr(c)+arg1[1], None) != None:
-                            break
-                    else:
-                        return True
-                else:
-                    for c in range(min(ord(arg1[1]),ord(arg2[1]))+1, max(ord(arg1[1]),ord(arg2[1]))):
-                        if self.board.get(arg1[0]+chr(c), None) != None:
-                            break
-                    else:
-                        return True
-                return False
-            return False
-        elif piece == "h":
-            if sorted([abs(ord(arg1[0])-ord(arg2[0]), abs(ord(arg1[1])-ord(arg2[1])))]) == [1,2]:
-                return self.board.get(arg2, None) != None
-            return False
-        elif piece == "b":
-            if abs(ord(arg1[0])-ord(arg2[0])) == abs(ord(arg1[1])-ord(arg2[1])):
-                hor_dir = -1 if ord(arg1[0])>ord(arg2[0]) else 1
-                ver_dir = -1 if ord(arg1[1])>ord(arg2[1]) else 1
-                for i in range(1,abs(ord(arg1[0])-ord(arg2[0]))):
-                    if self.board.get(chr(ord(arg1[0])+hor_dir*i)+chr(ord(arg1[0])+ver_dir*i), None) != None:
-                        return False
-                else:
-                    return True
-            return False
-        elif piece == "q":
-            if abs(ord(arg1[0])-ord(arg2[0])) ^ abs(ord(arg1[1])-ord(arg2[1])):
-                if abs(ord(arg1[0])-ord(arg2[0])):
-                    for c in range(min(ord(arg1[0]),ord(arg2[0]))+1, max(ord(arg1[0]),ord(arg2[0]))):
-                        if self.board.get(chr(c)+arg1[1], None) != None:
-                            return False
-                    return True
-                else:
-                    for c in range(min(ord(arg1[1]),ord(arg2[1]))+1, max(ord(arg1[1]),ord(arg2[1]))):
-                        if self.board.get(arg1[0]+chr(c), None) != None:
-                            return False
-                    return True
-            elif abs(ord(arg1[0])-ord(arg2[0])) == abs(ord(arg1[1])-ord(arg2[1])):
-                hor_dir = -1 if ord(arg1[0])>ord(arg2[0]) else 1
-                ver_dir = -1 if ord(arg1[1])>ord(arg2[1]) else 1
-                for i in range(1,abs(ord(arg1[0])-ord(arg2[0]))):
-                    if self.board.get(chr(ord(arg1[0])+hor_dir*i)+chr(ord(arg1[0])+ver_dir*i), None) != None:
-                        return False
-                return True
-            return False
-        elif piece == "k":
-            if abs(ord(arg1[0])-ord(arg2[0])) + abs(ord(arg1[1])-ord(arg2[1])) == 1:
-                return True
-            elif self.in_check != self.turn:
-                if (self.board[arg1][0] == "b" and arg1 == "e1") or (self.board[arg1][0] == "w" and arg1 == "e8"):
-                    if (arg2 == "b"+arg1[1] and "r" in self.board.get("a"+arg1[1])):
-                        for c in range(ord('a')+1, ord('e')):
-                            if self.board.get(chr(c)+arg1[1], None) != None:
-                                return False
-                        self.board["c"+arg1[1]] = self.board["a"+arg1[1]]
-                        self.board["a"+arg1[1]] = None
-                        return True 
-                    elif(arg2 == "g"+arg1[1] and "r" in self.board.get("h"+arg1[1])):
-                        for c in range(ord('e')+1, ord('h')):
-                            if self.board.get(chr(c)+arg1[1], None) != None:
-                                return False
-                        self.board["f"+arg1[1]] = self.board["h"+arg1[1]]
-                        self.board["h"+arg1[1]] = None
-                        return True
-                return False    
-        return False                    
+        pass
