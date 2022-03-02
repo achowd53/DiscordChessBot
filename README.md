@@ -6,7 +6,7 @@ Art for Chess Pieces obtained from:
 
 Things to Do:
 - Add en passante to move validity for pawn and complete method to do it
-- Add to lookForChecks a way to see if castling or en passante will result in a check
+- Add to lookForChecks a way to see if en passante will result in a check
 - Set up logic.py to set up the board using chess pieces and accept commands and run game
 - Set up skeleton for bot.py for how different commands should work
 

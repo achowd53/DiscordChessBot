@@ -32,7 +32,12 @@ class ChessPiece:
                 king_pos_temp = pos
             else:
                 king_pos_temp = king_pos
-            action = {"moved":[[self, self.loc, pos]], "taken":[[self.board[pos],pos]] if self.board.get(pos, None) else []}
+            if pos == "kc":
+                action = {"moved":[[self, self.loc, "g"+self.loc[1]], [self.board["h"+self.loc[1]], "h"+self.loc[1], "f"+self.loc[1]]]}
+            elif pos == "qc":
+                action = {"moved":[[self, self.loc, "c"+self.loc[1]], [self.board["a"+self.loc[1]], "a"+self.loc[1], "d"+self.loc[1]]]}
+            else:
+                action = {"moved":[[self, self.loc, pos]], "taken":[[self.board[pos],pos]] if self.board.get(pos, None) else []}
             for piece, loc, new_loc in action["moved"]:
                 self.board[loc] = None
                 self.board[new_loc] = piece 
@@ -50,14 +55,15 @@ class ChessPiece:
             return None, None
         else:
             if pos == "kc":
-                self.castle("king")
+                return self.castle("king")
             elif pos == "qc":
-                self.castle("queen")
-            self.board[self.loc] = None
-            self.loc = pos
-            self.board[self.loc] = self 
-            self.num_movements += 1
-            return self.board, pos
+                return self.castle("queen")
+            else:
+                self.board[self.loc] = None
+                self.loc = pos
+                self.board[self.loc] = self 
+                self.num_movements += 1
+                return self.board, pos
 
     def castle(self, side): # Dummy function for castling
         pass
