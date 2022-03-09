@@ -6,6 +6,7 @@ class Bishop(ChessPiece):
         pass
 
     def updateValidMoves(self, board: dict, king_pos: str):
+        self.board = board
         self.valid_moves = set()
         for piece_name, shift in [[1,1],[1,-1],[-1,1],[-1,-1]]:
             temp_loc = self._addToLocWithNums(self.loc, shift)

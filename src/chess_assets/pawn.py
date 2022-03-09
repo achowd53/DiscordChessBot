@@ -29,6 +29,7 @@ class Pawn(ChessPiece):
         pass
 
     def updateValidMoves(self, board: dict, king_pos: str):
+        self.board = board
         self.valid_moves = set()
         dir = 1 if self.getColor() == "black" else -1
         for target in [[-1,dir],[1,dir]]:

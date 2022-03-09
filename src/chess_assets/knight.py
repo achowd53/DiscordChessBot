@@ -6,6 +6,7 @@ class Knight(ChessPiece):
         pass
     
     def updateValidMoves(self, board: dict, king_pos: str):
+        self.board = board
         self.valid_moves = set()
         knight_moves = [(1,2),(2,1),(-1,2),(2,-1),(1,-2),(-2,1),(-1,-2),(-2,-1)]
         for shift in knight_moves:
