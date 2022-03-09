@@ -3,6 +3,7 @@ from .piece import ChessPiece
 class King(ChessPiece):
     def __init__(self):
         self.piece = " king"
+        self.in_check = False
         pass
     
     def castle(self, side): #Castles on king or queenside and returns board, new position of king
@@ -40,4 +41,5 @@ class King(ChessPiece):
               and self.board.get("h"+self.loc[1], None) and self.board["h"+self.loc[1]].getPiece() == " rook" \
               and self.board["h"+self.loc[1]].getColor() == self.getColor() and not self.board["h"+self.loc[1]].hasMoved():
                 self.valid_moves.add("kc")
+        self.in_check = self._isThreatened(king_pos)
         return super().updateValidMoves(board, king_pos)

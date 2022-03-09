@@ -14,8 +14,8 @@ class ChessGame: # En Passante not implemented
     
     def __init__(self, userA, userB):
         self.users = [str(userA), str(userB)]
-        shuffle([str(userA), str(userB)])
-        self.mentionable_users = [userA, userB]
+        shuffle(self.users)
+        self.mentionable_users = [self.users[0], self.users[1]]
         self.turn = 1
         self.board = {}
         self.king_pos = {}
@@ -43,6 +43,7 @@ class ChessGame: # En Passante not implemented
         self.board["d8"] = Queen(loc = "d8", color = "white")
         self.board["e1"] = King(loc = "e1", color = "black")
         self.board["e8"] = King(loc = "e8", color = "white")
+        self.updateAllPieces()
         
     def getCurrentPlayer(self):
         return self.users[self.turn]
@@ -56,7 +57,10 @@ class ChessGame: # En Passante not implemented
     def getOtherColor(self):
         return ["black","white"][(self.turn+1)%2]
     
-    def move(self, userA, arg1, arg2): # Makes Move, -1: Error, 1: Successful, 2: Promotion Input Required, 3: Check, 4: Draw, 5: Mate
+    def getColor(self, userA): #userA is a string
+        return "black" if self.users[0] == userA else "white"
+
+    def move(self, userA, arg1, arg2): # Makes Move, -1: Error, 1: Successful, 2: Promotion Input Required, 3: Draw, 4: Check, 5: Mate
         if self.getCurrentPlayer() != str(userA): # Wrong player making move
             return -1
         new_pos = -1
@@ -79,15 +83,18 @@ class ChessGame: # En Passante not implemented
         else:
             if piece == "king":
                 self.king_pos[color] = new_pos
+            self.updateAllPieces()
             if piece == " pawn" and arg2[1] in ["1","8"]: # Pawn Promotion time
                 self.turn = (self.turn+1)%2
                 return 2
-            elif self.inCheck(self.getOtherPlayer()): # Other player in check
-                if self.checkDraw(self.getOtherPlayer()):
+            elif self.checkDraw(self.getOtherPlayer()):
+                if self.inCheck(self.getOtherPlayer()):
                     self.turn = (self.turn+1)%2
                     return 5
+                self.turn = (self.turn+1)%2
                 return 3
-            elif self.checkDraw(self.getOtherPlayer()):
+            elif self.inCheck(self.getOtherPlayer()): # Other player in check
+                self.turn = (self.turn+1)%2
                 return 4
     
     def updateAllPieces(self):
@@ -96,7 +103,12 @@ class ChessGame: # En Passante not implemented
                 self.board[pos].updateValidMoves(self.board, self.king_pos[self.board[pos].getColor()])
     
     def checkDraw(self, userA):
-        pass
+        color = self.getColor(userA)
+        for pos in self.board:
+            if self.board.get(pos, None) and self.board[pos].getColor() == color:
+                if len(self.board[pos].valid_moves) > 0:
+                    return False
+        return True
 
     def inCheck(self, userA):
-        pass
+        return self.board[self.getColor(userA)].in_check
