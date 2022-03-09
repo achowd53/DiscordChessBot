@@ -49,9 +49,9 @@ class ChessPiece:
                 self.board[loc] = piece
         self.valid_moves = non_check_moves
 
-    def moveTo(self, pos): # Move piece if possible and return board and pos moved to, otherwise return None
+    def moveTo(self, pos): # Move piece if possible and return board and pos moved to, otherwise return -1 for pos
         if pos not in self.valid_moves:
-            return None, None
+            return self.board, -1
         else:
             if pos == "kc":
                 return self.castle("king")
