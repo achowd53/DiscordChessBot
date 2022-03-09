@@ -124,6 +124,4 @@ class ChessPiece:
                 else:
                     break
         return False
-         
-    
     
