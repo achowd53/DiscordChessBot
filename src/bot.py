@@ -20,6 +20,27 @@ async def on_ready():
 async def on_message(ctx):
 	await bot.process_commands(ctx)
  
+async def turnResults(ctx, arg1: str, arg2: str):
+    res, ext = current_games[users_busy_playing[ctx.author][1]].move(ctx.author, arg1, arg2)
+    if res == -1:
+        await ctx.channel.send("Invalid move selected or in check. Use of command: c!mv arg1 arg2")
+        return
+    elif res == 1:
+        # Delete old message from bot and repost image, pinging the other player
+        await ctx.channel.send(f"{users_busy_playing[ctx.author][0].mention}")
+    elif res == 5:
+        await ctx.channel.send(f"{ext.mention} has been checkmated. The winner is {ctx.author.mention}")
+    elif res == 3:
+        await ctx.channel.send(f"{ext.mention} and {ctx.author.mention}'s game has resulted in a draw.")
+    elif res == 4:
+        await ctx.channel.send(f"{ext.mention} is in check.")
+    if res == 5 or res == 3:
+        current_games.pop(users_busy_playing[ctx.author][1])
+        users_busy_playing.pop(users_busy_playing[ctx.author][0])
+        users_busy_playing.pop(ctx.author)
+    # Reactionary message for promotion of piece if necessary, check for checkmate after update afterwards
+    # Update it all
+
 @bot.command(name="mv")
 async def movePiece(ctx, arg1: str, arg2: str):
     if ctx.author not in users_busy_playing:
@@ -29,28 +50,18 @@ async def movePiece(ctx, arg1: str, arg2: str):
     not('1' <= arg1[1] <= '8') or not('1' <= arg2[1] <= '8'):
         await ctx.channel.send("Invalid arguments selected. Use of command: c!mv arg1 arg2")
         return
-    res, ext = current_games[users_busy_playing[ctx.author][1]].move(ctx.author, arg1, arg2)
-    if res == -1:
-        await ctx.channel.send("Invalid move selected or in check. Use of command: c!mv arg1 arg2")
-        return
-    elif res == 1:
-        # Delete old message from bot and repost image, pinging the other player
-        await ctx.channel.send(f"{users_busy_playing[ctx.author][0].mention}")
-    elif res == 3:
-        await ctx.channel.send(f"{ext.mention} has been checkmated. The winner is {ctx.author.mention}")
-    elif res == 4:
-        await ctx.channel.send(f"{ext.mention} and {ctx.author.mention}'s game has resulted in a draw.")
-    if res == 3 or res == 4:
-        current_games.pop(users_busy_playing[ctx.author][1])
-        users_busy_playing.pop(users_busy_playing[ctx.author][0])
-        users_busy_playing.pop(ctx.author)
-    # Reactionary message for promotion of piece if necessary
-    # Update it all
-    # Check for draws or checkmate
+    turnResults(ctx, arg1, arg2)
 
 @bot.command(name="mv castle")
-async def castle(ctx, arg1): #king, queen
-    pass
+async def castle(ctx, arg1, arg2): #king, queen
+    if ctx.author not in users_busy_playing:
+        await ctx.channel.send("Go start a game first!")
+        return
+    if len(arg1) != 2 or len(arg2) != 2 or not('a' <= arg1[0].lower() <= 'h') or not('a' <= arg2[0].lower() <= 'h') or\
+    not('1' <= arg1[1] <= '8') or not('1' <= arg2[1] <= '8'):
+        await ctx.channel.send("Invalid arguments selected. Use of command: c!castle king/queenPos rookPos")
+        return 
+    turnResults(ctx, arg1, arg2)
 
 @bot.command(name="mv enpassante")
 # have to keep track of last move opponent made for this

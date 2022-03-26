@@ -16,7 +16,7 @@ class ChessGame: # En Passante not implemented
         self.users = [str(userA), str(userB)]
         shuffle(self.users)
         self.mentionable_users = [self.users[0], self.users[1]]
-        self.turn = 1
+        self.turn = 0
         self.board = {}
         self.king_pos = {}
         self.initBoard()
@@ -62,12 +62,12 @@ class ChessGame: # En Passante not implemented
 
     def move(self, userA, arg1, arg2): # Makes Move, -1: Error, 1: Successful, 2: Promotion Input Required, 3: Draw, 4: Check, 5: Mate
         if self.getCurrentPlayer() != str(userA): # Wrong player making move
-            return -1
+            return -1, self.mentionable_users[self.turn]
         new_pos = -1
         piece = self.board.get(arg1, None)
         color = None
         if not piece: # Trying to move a blank square
-            return -1
+            return -1, self.mentionable_users[self.turn]
         else:
             color = piece.getColor()
             piece = piece.getPiece() 
@@ -79,23 +79,23 @@ class ChessGame: # En Passante not implemented
         else:
             self.board, new_pos = self.board[arg1].moveTo(arg2)
         if new_pos == -1: # Move invalid due to check or space was blocked by a piece
-            return -1
+            return -1, self.mentionable_users[self.turn]
         else:
             if piece == "king":
                 self.king_pos[color] = new_pos
             self.updateAllPieces()
             if piece == " pawn" and arg2[1] in ["1","8"]: # Pawn Promotion time
                 self.turn = (self.turn+1)%2
-                return 2
+                return 2, self.mentionable_users[self.turn]
             elif self.checkDraw(self.getOtherPlayer()):
                 if self.inCheck(self.getOtherPlayer()):
                     self.turn = (self.turn+1)%2
-                    return 5
+                    return 5, self.mentionable_users[(self.turn+1)%2]
                 self.turn = (self.turn+1)%2
-                return 3
+                return 3, None
             elif self.inCheck(self.getOtherPlayer()): # Other player in check
                 self.turn = (self.turn+1)%2
-                return 4
+                return 4, self.mentionable_users[(self.turn+1)%2]
     
     def updateAllPieces(self):
         for pos in self.board:
