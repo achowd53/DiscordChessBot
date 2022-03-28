@@ -5,9 +5,9 @@ from .knight import Knight
 from .bishop import Bishop
 
 class Pawn(ChessPiece):
-    def __init__(self):
+    def __init__(self, loc, color):
         self.piece = " pawn"
-        pass
+        super().__init__(loc, color)
 
     def promotePawn(self, promoteTo, king_pos): # Promotes pawn and returns board with promoted pawn
         newPiece = None

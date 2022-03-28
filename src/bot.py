@@ -4,7 +4,7 @@ from logic import ChessGame
 import uuid
 
 bot = Bot(command_prefix="c!")
-TOKEN = ""
+TOKEN = "OTM5OTU2NTMwMjEwNTM3NTUy.YgAYvA.-wKa0uqGsYKQdoIvngqLNj8LEB8"
 current_games = {} # game_hash: Game
 users_busy_playing = {} # userA: (userB, game_hash), userB: (userA, game_hash)
 challenges_in_progress = set() # sorted[(userA, userB)]
@@ -39,7 +39,6 @@ async def turnResults(ctx, arg1: str, arg2: str):
         users_busy_playing.pop(users_busy_playing[ctx.author][0])
         users_busy_playing.pop(ctx.author)
     # Reactionary message for promotion of piece if necessary, check for checkmate after update afterwards
-    # Update it all
 
 @bot.command(name="mv")
 async def movePiece(ctx, arg1: str, arg2: str):
@@ -50,7 +49,7 @@ async def movePiece(ctx, arg1: str, arg2: str):
     not('1' <= arg1[1] <= '8') or not('1' <= arg2[1] <= '8'):
         await ctx.channel.send("Invalid arguments selected. Use of command: c!mv arg1 arg2")
         return
-    turnResults(ctx, arg1, arg2)
+    await turnResults(ctx, arg1, arg2)
 
 @bot.command(name="mv castle")
 async def castle(ctx, arg1, arg2): #king, queen
@@ -61,7 +60,7 @@ async def castle(ctx, arg1, arg2): #king, queen
     not('1' <= arg1[1] <= '8') or not('1' <= arg2[1] <= '8'):
         await ctx.channel.send("Invalid arguments selected. Use of command: c!castle king/queenPos rookPos")
         return 
-    turnResults(ctx, arg1, arg2)
+    await turnResults(ctx, arg1, arg2)
 
 @bot.command(name="mv enpassante")
 # have to keep track of last move opponent made for this
@@ -80,7 +79,7 @@ async def retireGame(ctx):
     #delete forfeit message from user and last chess image
 
 @bot.command(name="play")
-async def initGame(ctx, arg1 : discord.Member = None):
+async def playGame(ctx, arg1 : discord.Member = None):
     if arg1 in users_busy_playing:
         await ctx.channel.send(f"{arg1} is busy playing with someone else. Wait your turn.")
         return
@@ -89,7 +88,7 @@ async def initGame(ctx, arg1 : discord.Member = None):
     await ctx.channel.send(f"{ctx.author.mention} has graciously invited you, {arg1.mention}, to play. \"c!accept {ctx.author.mention}\" to accept their challenge.")
 
 @bot.command(name="accept")
-async def initGame(ctx, arg1 : discord.Member = None):
+async def acceptGame(ctx, arg1 : discord.Member = None):
     if arg1 in users_busy_playing:
         await ctx.channel.send(f"{arg1} is busy playing with someone else. Wait your turn.")
         return
@@ -100,7 +99,8 @@ async def initGame(ctx, arg1 : discord.Member = None):
         users_busy_playing[ctx.author] = (arg1, hash)
         users_busy_playing[arg1] = (ctx.author, hash)
         current_games[users_busy_playing[ctx.author][1]] = ChessGame(ctx.author,users_busy_playing[ctx.author][0])
-        await ctx.channel.send(f"{current_games[users_busy_playing[ctx.author][1]].mentionable_users[1].mention}")
+        await ctx.channel.send(f"{arg1.mention}, {ctx.author.mention} has accepted the challenge.")
+        await ctx.channel.send(f"{current_games[users_busy_playing[ctx.author][1]].mentionable_users[0].mention}")
         # Send first image
     else:
         await ctx.channel.send(f"{ctx.author.mention} is trying to play a game with someone who didn't want to play with them.")

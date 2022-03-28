@@ -3,19 +3,19 @@ from random import shuffle
 from sympy import E
 
 from chess_assets.piece import ChessPiece
-from .chess_assets.bishop import Bishop
-from .chess_assets.king import King
-from .chess_assets.knight import Knight
-from .chess_assets.pawn import Pawn
-from .chess_assets.queen import Queen
-from .chess_assets.rook import Rook
+from chess_assets.bishop import Bishop
+from chess_assets.king import King
+from chess_assets.knight import Knight
+from chess_assets.pawn import Pawn
+from chess_assets.queen import Queen
+from chess_assets.rook import Rook
 
 class ChessGame: # En Passante not implemented
     
     def __init__(self, userA, userB):
         self.users = [str(userA), str(userB)]
         shuffle(self.users)
-        self.mentionable_users = [self.users[0], self.users[1]]
+        self.mentionable_users = [userA if self.users[0] == str(userA) else userB, userB if self.users[1] == str(userB) else userA]
         self.turn = 0
         self.board = {}
         self.king_pos = {}
@@ -98,7 +98,11 @@ class ChessGame: # En Passante not implemented
                 return 4, self.mentionable_users[(self.turn+1)%2]
     
     def updateAllPieces(self):
+        toUpdate = []
         for pos in self.board:
+            if self.board.get(pos, None):
+                toUpdate.append(pos)
+        for pos in toUpdate:
             if self.board.get(pos, None):
                 self.board[pos].updateValidMoves(self.board, self.king_pos[self.board[pos].getColor()])
     

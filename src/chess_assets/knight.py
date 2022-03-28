@@ -1,10 +1,10 @@
 from .piece import ChessPiece
 
 class Knight(ChessPiece):
-    def __init__(self):
+    def __init__(self, loc, color):
         self.piece = " knight"
-        pass
-    
+        super().__init__(loc, color)
+
     def updateValidMoves(self, board: dict, king_pos: str):
         self.board = board
         self.valid_moves = set()

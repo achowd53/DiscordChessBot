@@ -2,7 +2,6 @@ class ChessPiece:
     def __init__(self, loc: str, color: str):
         self.loc = loc
         self.color = color
-        self.piece = None
         self.num_movements = 0
         self.valid_moves = set() #update whenever a piece moves after picture gets sent
         self.board = None # Internal memory of board state updated with update call
@@ -95,7 +94,7 @@ class ChessPiece:
     def _convertNumsToLoc(self, pos): # Convert 2-integer indexed position to location
         return chr(pos[0]+ord('a')-1) + chr(pos[1]+ord('1')-1)
 
-    def _addToLocWithNums(self, pos: str, add_with: tuple(int, int)): # Add to a location with a 2-integer indexed movement
+    def _addToLocWithNums(self, pos, add_with): # Add to a location with a 2-integer indexed movement
         pos = self._convertLocToNums(pos)
         pos = (pos[0]+add_with[0], pos[1]+add_with[1])
         if not self._inBounds(pos):
@@ -112,7 +111,7 @@ class ChessPiece:
                 if self.board.get(self._addToLocWithNums(loc, target), None) != None:
                     if self.board[self._addToLocWithNums(loc, target)].getName() == self.getOtherColor() + piece:
                         return True
-        for piece_name, shift in [(" rook",[1,0]),(" rook",[-1,0]),(" rook",[0,1]),(" rook",[0,-1])
+        for piece_name, shift in [(" rook",[1,0]),(" rook",[-1,0]),(" rook",[0,1]),(" rook",[0,-1]), \
         (" bishop",[1,1]),(" bishop",[1,-1]),(" bishop",[-1,1]),(" bishop",[-1,-1])]:
             temp_loc = self._addToLocWithNums(loc, shift)
             while temp_loc != "NA":
