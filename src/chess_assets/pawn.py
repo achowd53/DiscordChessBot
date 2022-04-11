@@ -38,6 +38,6 @@ class Pawn(ChessPiece):
                 if self.board[loc].getColor() == self.getOtherColor():
                    self.valid_moves.add(loc)
         self.valid_moves.add(self._addToLocWithNums(self.loc, [0,dir]))
-        if (self.color == "black" and self.loc[1] == "2") or (self.color == "white" and self.loc[1] == "8"):
+        if (self.color == "black" and self.loc[1] == "2") or (self.color == "white" and self.loc[1] == "7"):
             self.valid_moves.add(self._addToLocWithNums(self.loc, [0,dir*2]))
         return super().updateValidMoves(board, king_pos)

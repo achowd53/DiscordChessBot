@@ -1,7 +1,5 @@
 from random import shuffle
 
-from sympy import E
-
 from chess_assets.piece import ChessPiece
 from chess_assets.bishop import Bishop
 from chess_assets.king import King
@@ -62,11 +60,13 @@ class ChessGame: # En Passante not implemented
 
     def move(self, userA, arg1, arg2): # Makes Move, -1: Error, 1: Successful, 2: Promotion Input Required, 3: Draw, 4: Check, 5: Mate
         if self.getCurrentPlayer() != str(userA): # Wrong player making move
+            print("Wrong player making a move")
             return -1, self.mentionable_users[self.turn]
         new_pos = -1
         piece = self.board.get(arg1, None)
         color = None
         if not piece: # Trying to move a blank square
+            print("Moving piece from blank square")
             return -1, self.mentionable_users[self.turn]
         else:
             color = piece.getColor()
@@ -79,6 +79,7 @@ class ChessGame: # En Passante not implemented
         else:
             self.board, new_pos = self.board[arg1].moveTo(arg2)
         if new_pos == -1: # Move invalid due to check or space was blocked by a piece
+            print("Move invalid")
             return -1, self.mentionable_users[self.turn]
         else:
             if piece == "king":
@@ -96,7 +97,10 @@ class ChessGame: # En Passante not implemented
             elif self.inCheck(self.getOtherPlayer()): # Other player in check
                 self.turn = (self.turn+1)%2
                 return 4, self.mentionable_users[(self.turn+1)%2]
-    
+            else:
+                self.turn = (self.turn+1)%2
+                return 1, self.board
+
     def updateAllPieces(self):
         toUpdate = []
         for pos in self.board:
@@ -115,4 +119,4 @@ class ChessGame: # En Passante not implemented
         return True
 
     def inCheck(self, userA):
-        return self.board[self.getColor(userA)].in_check
+        return self.board[self.king_pos[self.getColor(userA)]].in_check
