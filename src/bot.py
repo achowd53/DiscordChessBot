@@ -2,6 +2,7 @@ import discord
 from discord.ext.commands import Bot
 from logic import ChessGame
 import uuid
+import io
 
 bot = Bot(command_prefix="c!")
 TOKEN = "OTM5OTU2NTMwMjEwNTM3NTUy.YgAYvA.-wKa0uqGsYKQdoIvngqLNj8LEB8"
@@ -26,7 +27,10 @@ async def turnResults(ctx, arg1: str, arg2: str):
         await ctx.channel.send("Invalid move selected or in check. Use of command: c!mv arg1 arg2")
         return
     elif res == 1:
-        # Delete old message from bot and repost image, pinging the other player
+        with io.BytesIO() as image_binary:
+            current_games[users_busy_playing[ctx.author][1]].drawBoard().save(image_binary, 'PNG')
+            image_binary.seek(0)
+            await ctx.channel.send(file=discord.File(fp=image_binary, filename='chessState.png'))
         await ctx.channel.send(f"{users_busy_playing[ctx.author][0].mention}")
     elif res == 5:
         await ctx.channel.send(f"{ext.mention} has been checkmated. The winner is {ctx.author.mention}")
@@ -76,7 +80,6 @@ async def retireGame(ctx):
     current_games.pop(users_busy_playing[ctx.author][1])
     users_busy_playing.pop(users_busy_playing[ctx.author][0])
     users_busy_playing.pop(ctx.author)
-    #delete forfeit message from user and last chess image
 
 @bot.command(name="play")
 async def playGame(ctx, arg1 : discord.Member = None):
@@ -89,6 +92,9 @@ async def playGame(ctx, arg1 : discord.Member = None):
 
 @bot.command(name="accept")
 async def acceptGame(ctx, arg1 : discord.Member = None):
+    if ctx.author in users_busy_playing:
+        await ctx.channel.send(f"Finish you current game first.")
+        return
     if arg1 in users_busy_playing:
         await ctx.channel.send(f"{arg1} is busy playing with someone else. Wait your turn.")
         return
@@ -101,8 +107,18 @@ async def acceptGame(ctx, arg1 : discord.Member = None):
         current_games[users_busy_playing[ctx.author][1]] = ChessGame(ctx.author,users_busy_playing[ctx.author][0])
         await ctx.channel.send(f"{arg1.mention}, {ctx.author.mention} has accepted the challenge.")
         await ctx.channel.send(f"{current_games[users_busy_playing[ctx.author][1]].mentionable_users[0].mention}")
-        # Send first image
+        with io.BytesIO() as image_binary:
+            current_games[users_busy_playing[ctx.author][1]].drawBoard().save(image_binary, 'PNG')
+            image_binary.seek(0)
+            await ctx.channel.send(file=discord.File(fp=image_binary, filename='chessState.png'))
     else:
         await ctx.channel.send(f"{ctx.author.mention} is trying to play a game with someone who didn't want to play with them.")
 
+@bot.command(name="refresh")
+async def refresh(ctx):
+    print(current_games[users_busy_playing[ctx.author][1]].board)
+    with io.BytesIO() as image_binary:
+        current_games[users_busy_playing[ctx.author][1]].drawBoard().save(image_binary, 'PNG')
+        image_binary.seek(0)
+        await ctx.channel.send(file=discord.File(fp=image_binary, filename='chessState.png'))
 bot.run(TOKEN)

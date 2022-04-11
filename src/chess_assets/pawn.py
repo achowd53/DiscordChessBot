@@ -31,13 +31,13 @@ class Pawn(ChessPiece):
     def updateValidMoves(self, board: dict, king_pos: str):
         self.board = board
         self.valid_moves = set()
-        dir = 1 if self.getColor() == "black" else -1
+        dir = 1 if self.getColor() == "white" else -1
         for target in [[-1,dir],[1,dir]]:
             loc = self._addToLocWithNums(self.loc, target)
             if self.board.get(loc, None) != None:
                 if self.board[loc].getColor() == self.getOtherColor():
                    self.valid_moves.add(loc)
         self.valid_moves.add(self._addToLocWithNums(self.loc, [0,dir]))
-        if (self.color == "black" and self.loc[1] == "2") or (self.color == "white" and self.loc[1] == "7"):
+        if (self.color == "black" and self.loc[1] == "7") or (self.color == "white" and self.loc[1] == "2"):
             self.valid_moves.add(self._addToLocWithNums(self.loc, [0,dir*2]))
         return super().updateValidMoves(board, king_pos)

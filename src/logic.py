@@ -1,4 +1,5 @@
 from random import shuffle
+from draw import ChessDraw
 
 from chess_assets.piece import ChessPiece
 from chess_assets.bishop import Bishop
@@ -17,37 +18,38 @@ class ChessGame: # En Passante not implemented
         self.turn = 0
         self.board = {}
         self.king_pos = {}
+        self.draw = ChessDraw()
         self.initBoard()
     
     def initBoard(self): # Initializes board state
         self.board = {}
-        self.king_pos = {"black":"e1","white":"e8"}
+        self.king_pos = {"white":"e1","black":"e8"}
         for col in "abcdefgh":
-            self.board[col+"7"] = Pawn(loc = col+"7", color = "white")
-            self.board[col+"2"] = Pawn(loc = col+"2", color = "black")
+            self.board[col+"7"] = Pawn(loc = col+"7", color = "black")
+            self.board[col+"2"] = Pawn(loc = col+"2", color = "white")
         for pos in ["a1", "h1"]:
-            self.board[pos] = Rook(loc = pos, color = "black")
-        for pos in ["a8", "h8"]:
             self.board[pos] = Rook(loc = pos, color = "white")
+        for pos in ["a8", "h8"]:
+            self.board[pos] = Rook(loc = pos, color = "black")
         for pos in ["b1", "g1"]:
-            self.board[pos] = Knight(loc = pos, color = "black")
-        for pos in ["b8", "g8"]:
             self.board[pos] = Knight(loc = pos, color = "white")
+        for pos in ["b8", "g8"]:
+            self.board[pos] = Knight(loc = pos, color = "black")
         for pos in ["c1", "f1"]:
-            self.board[pos] = Bishop(loc = pos, color = "black")
-        for pos in ["c8", "f8"]:
             self.board[pos] = Bishop(loc = pos, color = "white")
-        self.board["d1"] = Queen(loc = "d1", color = "black")
-        self.board["d8"] = Queen(loc = "d8", color = "white")
-        self.board["e1"] = King(loc = "e1", color = "black")
-        self.board["e8"] = King(loc = "e8", color = "white")
+        for pos in ["c8", "f8"]:
+            self.board[pos] = Bishop(loc = pos, color = "black")
+        self.board["d1"] = Queen(loc = "d1", color = "white")
+        self.board["d8"] = Queen(loc = "d8", color = "black")
+        self.board["e1"] = King(loc = "e1", color = "white")
+        self.board["e8"] = King(loc = "e8", color = "black")
         self.updateAllPieces()
         
     def getCurrentPlayer(self):
         return self.users[self.turn]
     
     def getOtherPlayer(self):
-        return list(set(self.users)-set([self.getCurrentPlayer()]))[0]
+        return self.users[(self.turn+1)%2]
     
     def getCurrentColor(self):
         return ["black","white"][self.turn]
@@ -80,6 +82,7 @@ class ChessGame: # En Passante not implemented
             self.board, new_pos = self.board[arg1].moveTo(arg2)
         if new_pos == -1: # Move invalid due to check or space was blocked by a piece
             print("Move invalid")
+            print("Valid Moves:",self.board[arg1].valid_moves)
             return -1, self.mentionable_users[self.turn]
         else:
             if piece == "king":
@@ -120,3 +123,6 @@ class ChessGame: # En Passante not implemented
 
     def inCheck(self, userA):
         return self.board[self.king_pos[self.getColor(userA)]].in_check
+
+    def drawBoard(self):
+        return self.draw.drawBoard(self.board)

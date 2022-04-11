@@ -31,9 +31,9 @@ class ChessPiece:
             else:
                 king_pos_temp = king_pos
             if pos == "kc":
-                action = {"moved":[[self, self.loc, "g"+self.loc[1]], [self.board["h"+self.loc[1]], "h"+self.loc[1], "f"+self.loc[1]]]}
+                action = {"moved":[[self, self.loc, "g"+self.loc[1]], [self.board["h"+self.loc[1]], "h"+self.loc[1], "f"+self.loc[1]]], "taken":[]}
             elif pos == "qc":
-                action = {"moved":[[self, self.loc, "c"+self.loc[1]], [self.board["a"+self.loc[1]], "a"+self.loc[1], "d"+self.loc[1]]]}
+                action = {"moved":[[self, self.loc, "c"+self.loc[1]], [self.board["a"+self.loc[1]], "a"+self.loc[1], "d"+self.loc[1]]], "taken":[]}
             else:
                 action = {"moved":[[self, self.loc, pos]], "taken":[[self.board[pos],pos]] if self.board.get(pos, None) else []}
             for piece, loc, new_loc in action["moved"]:
