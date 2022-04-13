@@ -46,7 +46,7 @@ async def turnResults(ctx, arg1: str, arg2: str):
     if res == -1:
         await ctx.channel.send("Invalid move selected or will put in check. Use of command: c!mv arg1 arg2")
         return
-    elif res == 1:
+    elif res == 1 or res == 2:
         await sendGameBoard(ctx)
         await ctx.channel.send(f"{users_busy_playing[ctx.author][0].mention}")
     elif res == 5:

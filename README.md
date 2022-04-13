@@ -9,9 +9,8 @@ Things to Do:
 - Make sure you can concurrently have the bot running multiple games at once
 - Implement pawn promotion on the bot side
 - Add en passante to move validity for pawn and complete method to do it
-- Add to lookForChecks a way to see if en passante will result in a check
-- Stalemate 
-- Allow for movement by chess notation
+- Add to lookForChecks a way to see if en passante will result in a check 
+- Allow for movement by chess notation (Maybe depending on how long it seems to implement)
 - Chess Agent using Min-Max Algorithm with Alpha-Beta Pruning
 - Chess Agent using Reinforcement Learning
 - Chess Agent using CNN and MonteCarlo Tree Search
