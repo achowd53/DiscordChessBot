@@ -19,6 +19,8 @@ class ChessGame: # En Passante not implemented
         self.board = {}
         self.king_pos = {}
         self.draw = ChessDraw()
+        self.stalemate_timer = 50
+        self.pieces_left = 32
         self.initBoard()
     
     def initBoard(self): # Initializes board state
@@ -60,7 +62,14 @@ class ChessGame: # En Passante not implemented
     def getColor(self, userA): #userA is a string
         return "black" if self.users[0] == userA else "white"
 
-    def move(self, userA, arg1, arg2): # Makes Move, -1: Error, 1: Successful, 2: Promotion Input Required, 3: Draw, 4: Check, 5: Mate
+    def getPieceCount(self):
+        piece_num = 0
+        for pos in self.board:
+            if self.board[pos] != None:
+                piece_num += 1
+        return piece_num
+
+    def move(self, userA, arg1, arg2): # Makes Move, -1: Error, 1: Successful, 2: Promotion, 3: Draw, 4: Check, 5: Mate, 6: Stalemate
         if self.getCurrentPlayer() != str(userA): # Wrong player making move
             print("Wrong player making a move")
             return -1, self.mentionable_users[self.turn]
@@ -73,26 +82,33 @@ class ChessGame: # En Passante not implemented
         else:
             color = piece.getColor()
             piece = piece.getPiece() 
-        if piece == " king" and self.board[arg2].getPiece() == " rook":
+        if piece == " king" and self.board[arg2].getPiece() == " rook": # If Castle Input
             if arg2[0] == "a":
                 self.board, new_pos = self.board[arg1].moveTo("kc")
             elif arg2[0] == "h":
                 self.board, new_pos = self.board[arg1].moveTo("qc")
-        else:
+        else: # Normal Move
             self.board, new_pos = self.board[arg1].moveTo(arg2)
         if new_pos == -1: # Move invalid due to check or space was blocked by a piece
             print("Move invalid")
             print("Valid Moves:",self.board[arg1].valid_moves)
             return -1, self.mentionable_users[self.turn]
         else:
-            if piece == "king":
+            if piece == "king": # Update king_pos if king was moved
                 self.king_pos[color] = new_pos
+            if self.pieces_left < self.getPieceCount(): # Update Stalemate timer
+                self.stalemate_timer = 50
+                self.pieces_left = self.getPieceCount()
+            else:
+                self.stalemate_timer -= 1
+            if self.stalemate_timer == 0: # Stalemate
+                return 6, None
             self.updateAllPieces()
             if piece == " pawn" and arg2[1] in ["1","8"]: # Pawn Promotion time
                 self.turn = (self.turn+1)%2
                 return 2, self.mentionable_users[self.turn]
-            elif self.checkDraw(self.getOtherPlayer()):
-                if self.inCheck(self.getOtherPlayer()):
+            elif self.checkDraw(self.getOtherPlayer()): # Draw
+                if self.inCheck(self.getOtherPlayer()): # Checkmate
                     self.turn = (self.turn+1)%2
                     return 5, self.mentionable_users[(self.turn+1)%2]
                 self.turn = (self.turn+1)%2
@@ -100,7 +116,7 @@ class ChessGame: # En Passante not implemented
             elif self.inCheck(self.getOtherPlayer()): # Other player in check
                 self.turn = (self.turn+1)%2
                 return 4, self.mentionable_users[(self.turn+1)%2]
-            else:
+            else: # Normal turn occured
                 self.turn = (self.turn+1)%2
                 return 1, self.board
 

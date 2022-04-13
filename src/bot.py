@@ -35,24 +35,33 @@ async def help(ctx):
     message += "  retire                    Forfeit game against opponent```"        
     await ctx.channel.send(message)
 
+async def sendGameBoard(ctx):
+    with io.BytesIO() as image_binary:
+        current_games[users_busy_playing[ctx.author][1]].drawBoard().save(image_binary, 'PNG')
+        image_binary.seek(0)
+        await ctx.channel.send(file=discord.File(fp=image_binary, filename='chessState.png'))
+
 async def turnResults(ctx, arg1: str, arg2: str):
     res, ext = current_games[users_busy_playing[ctx.author][1]].move(ctx.author, arg1, arg2)
     if res == -1:
-        await ctx.channel.send("Invalid move selected or in check. Use of command: c!mv arg1 arg2")
+        await ctx.channel.send("Invalid move selected or will put in check. Use of command: c!mv arg1 arg2")
         return
     elif res == 1:
-        with io.BytesIO() as image_binary:
-            current_games[users_busy_playing[ctx.author][1]].drawBoard().save(image_binary, 'PNG')
-            image_binary.seek(0)
-            await ctx.channel.send(file=discord.File(fp=image_binary, filename='chessState.png'))
+        await sendGameBoard(ctx)
         await ctx.channel.send(f"{users_busy_playing[ctx.author][0].mention}")
     elif res == 5:
+        await sendGameBoard(ctx)
         await ctx.channel.send(f"{ext.mention} has been checkmated. The winner is {ctx.author.mention}")
     elif res == 3:
+        await sendGameBoard(ctx)
         await ctx.channel.send(f"{ext.mention} and {ctx.author.mention}'s game has resulted in a draw.")
     elif res == 4:
+        await sendGameBoard(ctx)
         await ctx.channel.send(f"{ext.mention} is in check.")
-    if res == 5 or res == 3:
+    elif res == 6:
+        await sendGameBoard(ctx)
+        await ctx.channel.send(f"{ext.mention} and {ctx.author.mention}'s game has resulted in a stalemate.")
+    if res == 5 or res == 3 or res == 6:
         current_games.pop(users_busy_playing[ctx.author][1])
         users_busy_playing.pop(users_busy_playing[ctx.author][0])
         users_busy_playing.pop(ctx.author)
@@ -121,10 +130,7 @@ async def acceptGame(ctx, arg1 : discord.Member = None):
         current_games[users_busy_playing[ctx.author][1]] = ChessGame(ctx.author,users_busy_playing[ctx.author][0])
         await ctx.channel.send(f"{arg1.mention}, {ctx.author.mention} has accepted the challenge.")
         await ctx.channel.send(f"{current_games[users_busy_playing[ctx.author][1]].mentionable_users[0].mention}")
-        with io.BytesIO() as image_binary:
-            current_games[users_busy_playing[ctx.author][1]].drawBoard().save(image_binary, 'PNG')
-            image_binary.seek(0)
-            await ctx.channel.send(file=discord.File(fp=image_binary, filename='chessState.png'))
+        await sendGameBoard(ctx)
     else:
         await ctx.channel.send(f"{ctx.author.mention} is trying to play a game with someone who didn't want to play with them.")
 
@@ -133,9 +139,6 @@ async def remind(ctx):
     if ctx.author not in users_busy_playing:
         await ctx.channel.send("You're not currently playing a game with anyone.")
     else:
-        with io.BytesIO() as image_binary:
-            current_games[users_busy_playing[ctx.author][1]].drawBoard().save(image_binary, 'PNG')
-            image_binary.seek(0)
-            await ctx.channel.send(file=discord.File(fp=image_binary, filename='chessState.png'))
+        await sendGameBoard(ctx)
 
 bot.run(TOKEN)
