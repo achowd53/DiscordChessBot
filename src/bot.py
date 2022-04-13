@@ -5,6 +5,8 @@ import uuid
 import io
 
 bot = Bot(command_prefix="c!")
+bot.remove_command('help')
+
 TOKEN = "OTM5OTU2NTMwMjEwNTM3NTUy.YgAYvA.-wKa0uqGsYKQdoIvngqLNj8LEB8"
 current_games = {} # game_hash: Game
 users_busy_playing = {} # userA: (userB, game_hash), userB: (userA, game_hash)
@@ -20,7 +22,19 @@ async def on_ready():
 @bot.event
 async def on_message(ctx):
 	await bot.process_commands(ctx)
- 
+
+@bot.command(name="help")
+async def help(ctx):
+    message = "```Helpful Commands:\n  help                      Shows this message\n"
+    message += "  remind                    Shows board state of current game\n"
+    message += "Start Commands:\n  play user1                Challenge user1 to a game\n"
+    message += "  accept user1              Accept challenge from user1\n"
+    message += "Game Commands:\n  mv pos1 pos2              Move piece from pos1 to pos2 (Ex: c!mv e2 e3)\n"
+    message += "  mv castle pos1 pos2       Castle a queen/king on pos1 with a rook on pos2\n"
+    message += "  mv enpassante pos1 pos2   En Passante your pos1 pawn with enemy pos2 pawn\n"
+    message += "  retire                    Forfeit game against opponent```"        
+    await ctx.channel.send(message)
+
 async def turnResults(ctx, arg1: str, arg2: str):
     res, ext = current_games[users_busy_playing[ctx.author][1]].move(ctx.author, arg1, arg2)
     if res == -1:
@@ -114,11 +128,14 @@ async def acceptGame(ctx, arg1 : discord.Member = None):
     else:
         await ctx.channel.send(f"{ctx.author.mention} is trying to play a game with someone who didn't want to play with them.")
 
-@bot.command(name="refresh")
-async def refresh(ctx):
-    print(current_games[users_busy_playing[ctx.author][1]].board)
-    with io.BytesIO() as image_binary:
-        current_games[users_busy_playing[ctx.author][1]].drawBoard().save(image_binary, 'PNG')
-        image_binary.seek(0)
-        await ctx.channel.send(file=discord.File(fp=image_binary, filename='chessState.png'))
+@bot.command(name="remind")
+async def remind(ctx):
+    if ctx.author not in users_busy_playing:
+        await ctx.channel.send("You're not currently playing a game with anyone.")
+    else:
+        with io.BytesIO() as image_binary:
+            current_games[users_busy_playing[ctx.author][1]].drawBoard().save(image_binary, 'PNG')
+            image_binary.seek(0)
+            await ctx.channel.send(file=discord.File(fp=image_binary, filename='chessState.png'))
+
 bot.run(TOKEN)
