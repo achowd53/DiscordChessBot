@@ -7,6 +7,7 @@ Art for Chess Pieces obtained from:
 Things to Do:
 - Make sure check, checkmate, and draw work
 - Make sure you can concurrently have the bot running multiple games at once
+- Implement pawn promotion on the bot side
 - Add en passante to move validity for pawn and complete method to do it
 - Add to lookForChecks a way to see if en passante will result in a check
 - Stalemate 
