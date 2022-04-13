@@ -5,10 +5,17 @@ Art for Chess Pieces obtained from:
 - https://pixabay.com/vectors/chess-pieces-set-symbols-game-26774/
 
 Things to Do:
-- Set up skeleton for bot.py for how different commands should work
-- Set up logic.py to set up the board using chess pieces and accept commands and run game (Almost Done)
+- Make sure check, checkmate, and draw work
+- Make sure you can properly start another game after one ends
+- Make sure you can concurrently have the bot running multiple games at once
 - Add en passante to move validity for pawn and complete method to do it
 - Add to lookForChecks a way to see if en passante will result in a check
+- Stalemate 
+- Allow for movement by chess notation
+- Chess Agent using Min-Max Algorithm with Alpha-Beta Pruning
+- Chess Agent using Reinforcement Learning
+- Chess Agent using CNN and MonteCarlo Tree Search
+- Make these Agents playable against
 
 Steps in turn:
 - Send Image of Board State
