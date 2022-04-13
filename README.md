@@ -5,9 +5,8 @@ Art for Chess Pieces obtained from:
 - https://pixabay.com/vectors/chess-pieces-set-symbols-game-26774/
 
 Things to Do:
-- Make sure Check, Checkmate, Draw, and Stalemate work
+- Make sure Check, Checkmate, Draw, Stalemate, and Pawn Promotion work
 - Make sure you can concurrently have the bot running multiple games at once
-- Implement pawn promotion on the bot side
 - Add en passante to move validity for pawn and complete method to do it
 - Add to lookForChecks a way to see if en passante will result in a check 
 - Allow for movement by chess notation (Maybe depending on how long it seems to implement)

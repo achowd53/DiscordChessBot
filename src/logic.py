@@ -120,6 +120,13 @@ class ChessGame: # En Passante not implemented
                 self.turn = (self.turn+1)%2
                 return 1, self.board
 
+    def promotePawn(self, promoteTo):
+        for pos in self.board:
+            if pos[1] in ['1', '8'] and self.board.get(pos, None):
+                if self.board[pos].getPiece() == " pawn":
+                    self.board[pos].promotePawn(promoteTo, self.king_pos[self.board[pos].getColor()])
+                    break
+
     def updateAllPieces(self):
         toUpdate = []
         for pos in self.board:

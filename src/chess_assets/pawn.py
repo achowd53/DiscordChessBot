@@ -11,7 +11,7 @@ class Pawn(ChessPiece):
 
     def promotePawn(self, promoteTo, king_pos): # Promotes pawn and returns board with promoted pawn
         newPiece = None
-        if promoteTo == "horse":
+        if promoteTo == "knight":
             newPiece = Knight(self.loc, self.color)
         elif promoteTo == "queen":
             newPiece = Queen(self.loc, self.color)

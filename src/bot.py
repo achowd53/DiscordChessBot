@@ -46,7 +46,24 @@ async def turnResults(ctx, arg1: str, arg2: str):
     if res == -1:
         await ctx.channel.send("Invalid move selected or will put in check. Use of command: c!mv arg1 arg2")
         return
-    elif res == 1 or res == 2:
+    elif res == 1:
+        await sendGameBoard(ctx)
+        await ctx.channel.send(f"{users_busy_playing[ctx.author][0].mention}")
+    elif res == 2:
+        await sendGameBoard(ctx)
+        msg = await ctx.channel.send(f"React to this message to promote piece to\n  :crown:   Queen\n  :european_castle:   Rook\n:church:   Bishop\n  :horse:   Knight")
+        reactions = ["crown", "european_castle", "church", "horse"]
+        for emoticon in reactions:
+            await msg.add_reaction(emoticon)
+        reaction = await bot.wait_for_reaction(reactions,msg)
+        if reaction.emoji == "crown":
+            current_games[users_busy_playing[ctx.author][1]].promotePawn("queen")
+        elif reaction.emoji == "european_castle":
+            current_games[users_busy_playing[ctx.author][1]].promotePawn("rook")
+        elif reaction.emoji == "church":
+            current_games[users_busy_playing[ctx.author][1]].promotePawn("bishop")
+        elif reaction.emoji == "horse":
+            current_games[users_busy_playing[ctx.author][1]].promotePawn("knight")
         await sendGameBoard(ctx)
         await ctx.channel.send(f"{users_busy_playing[ctx.author][0].mention}")
     elif res == 5:
