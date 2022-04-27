@@ -9,10 +9,10 @@ class ChessPiece:
     def updateValidMoves(self, board: dict, king_pos: str): #  Update set of all valid moves of chess piece
         # Get all possible movements of the piece itself
         # Check validity against if any pieces of yours are located at those spots
-        self.lookForKills()
+        self.lookForAvoidAllies()
         self.lookForChecks(king_pos)
     
-    def lookForKills(self): # Update set of all valid moves of chess piece to be spaces that won't land on ally
+    def lookForAvoidAllies(self): # Update set of all valid moves of chess piece to be spaces that won't land on ally
         team_spaces = set()
         for pos in self.valid_moves:
             if pos in ["kc", "qc", "ep"]:
@@ -26,7 +26,7 @@ class ChessPiece:
         # Look through all valid moves and see if any result in check, remove them from valid moves
         non_check_moves = set()
         for pos in self.valid_moves:
-            if self.piece == "king":
+            if self.piece == " king":
                 king_pos_temp = pos
             else:
                 king_pos_temp = king_pos
@@ -115,6 +115,7 @@ class ChessPiece:
         (" bishop",[1,1]),(" bishop",[1,-1]),(" bishop",[-1,1]),(" bishop",[-1,-1])]:
             temp_loc = self._addToLocWithNums(loc, shift)
             while temp_loc != "NA":
+                if (loc != "e1"): print("check: ",temp_loc, "king_loc:",loc)
                 switch = self.board.get(temp_loc, None)
                 if switch == None:
                     temp_loc = self._addToLocWithNums(temp_loc, shift)

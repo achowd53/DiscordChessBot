@@ -30,8 +30,8 @@ async def help(ctx):
     message += "Start Commands:\n  play user1                Challenge user1 to a game\n"
     message += "  accept user1              Accept challenge from user1\n"
     message += "Game Commands:\n  mv pos1 pos2              Move piece from pos1 to pos2 (Ex: c!mv e2 e3)\n"
-    message += "  mv castle pos1 pos2       Castle a queen/king on pos1 with a rook on pos2\n"
-    message += "  mv enpassante pos1 pos2   En Passante your pos1 pawn with enemy pos2 pawn\n"
+    message += "  castle pos1 pos2          Castle a queen/king on pos1 with a rook on pos2\n"
+    message += "  enpassante pos1 pos2      En Passante your pos1 pawn with enemy pos2 pawn\n"
     message += "  retire                    Forfeit game against opponent```"        
     await ctx.channel.send(message)
 
@@ -44,7 +44,7 @@ async def sendGameBoard(ctx):
 async def turnResults(ctx, arg1: str, arg2: str):
     res, ext = current_games[users_busy_playing[ctx.author][1]].move(ctx.author, arg1, arg2)
     if res == -1:
-        await ctx.channel.send("Invalid move selected or will put in check. Use of command: c!mv arg1 arg2")
+        await ctx.channel.send("Invalid move selected or will put in check.")
         return
     elif res == 1:
         await sendGameBoard(ctx)
@@ -98,7 +98,7 @@ async def movePiece(ctx, arg1: str, arg2: str):
         return
     await turnResults(ctx, arg1, arg2)
 
-@bot.command(name="mv castle")
+@bot.command(name="castle")
 async def castle(ctx, arg1, arg2): #king, queen
     if ctx.author not in users_busy_playing:
         await ctx.channel.send("Go start a game first!")
@@ -109,7 +109,7 @@ async def castle(ctx, arg1, arg2): #king, queen
         return 
     await turnResults(ctx, arg1, arg2)
 
-@bot.command(name="mv enpassante")
+@bot.command(name="enpassante")
 # have to keep track of last move opponent made for this
 async def enpassante(ctx, arg1, arg2):
     pass

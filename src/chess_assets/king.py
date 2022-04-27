@@ -14,6 +14,8 @@ class King(ChessPiece):
             self.board["d"+self.loc[1]] = self.board["a"+self.loc[1]]
             self.board["e"+self.loc[1]] = None
             self.board["a"+self.loc[1]] = None
+            self.board["d"+self.loc[1]].loc = "d"+self.loc[1]
+            self.loc = "c"+self.loc[1]
             return self.board, "c"+self.loc[1]
         else:
             self.num_movements += 1
@@ -22,6 +24,8 @@ class King(ChessPiece):
             self.board["f"+self.loc[1]] = self.board["h"+self.loc[1]]
             self.board["e"+self.loc[1]] = None
             self.board["h"+self.loc[1]] = None
+            self.board["f"+self.loc[1]].loc = "f"+self.loc[1]
+            self.loc = "g"+self.loc[1]
             return self.board, "g"+self.loc[1]
 
     def updateValidMoves(self, board: dict, king_pos: str):
