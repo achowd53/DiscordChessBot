@@ -21,8 +21,17 @@ class ChessGame: # En Passante not implemented
         self.draw = ChessDraw()
         self.stalemate_timer = 50
         self.pieces_left = 32
-        self.initBoard()
+        #self.initBoard()
+        self._sampleBoard()
     
+    def _sampleBoard(self): # Sample Board for debugging purposes
+        self.board = {}
+        self.king_pos = {"white":"e1","black":"e8"}
+        self.board["e1"] = King(loc = "e1", color = "white")
+        self.board["e8"] = King(loc = "e8", color = "black")
+        self.board["a7"] = Pawn(loc="a7", color="white")
+        self.updateAllPieces()
+
     def initBoard(self): # Initializes board state
         self.board = {}
         self.king_pos = {"white":"e1","black":"e8"}
