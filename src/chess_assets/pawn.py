@@ -1,4 +1,3 @@
-from pickle import NONE
 from .piece import ChessPiece
 from .queen import Queen
 from .rook import Rook
