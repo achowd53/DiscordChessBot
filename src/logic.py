@@ -82,7 +82,7 @@ class ChessGame: # En Passante not implemented
         else:
             color = piece.getColor()
             piece = piece.getPiece() 
-        if piece == " king" and self.board[arg2].getPiece() == " rook": # If Castle Input
+        if piece == " king" and self.board.get(arg2, None) and self.board[arg2].getPiece() == " rook": # If Castle Input
             if arg2[0] == "a":
                 self.board, new_pos = self.board[arg1].moveTo("kc")
             elif arg2[0] == "h":
@@ -94,7 +94,7 @@ class ChessGame: # En Passante not implemented
             print("Valid Moves:",self.board[arg1].valid_moves)
             return -1, self.mentionable_users[self.turn]
         else:
-            if piece == "king": # Update king_pos if king was moved
+            if piece == " king": # Update king_pos if king was moved
                 self.king_pos[color] = new_pos
             if self.pieces_left < self.getPieceCount(): # Update Stalemate timer
                 self.stalemate_timer = 50

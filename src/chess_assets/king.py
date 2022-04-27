@@ -29,7 +29,7 @@ class King(ChessPiece):
         self.valid_moves = set()
         for target in [[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1]]:
             loc = self._addToLocWithNums(self.loc, target)
-            if board.get(loc, None) != None:
+            if loc != "NA":
                 self.valid_moves.add(loc)
         if not self.hasMoved():
             if not any([self.board.get("d"+self.loc[1], None), self.board.get("c"+self.loc[1], None), 
