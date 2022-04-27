@@ -51,18 +51,21 @@ async def turnResults(ctx, arg1: str, arg2: str):
         await ctx.channel.send(f"{users_busy_playing[ctx.author][0].mention}")
     elif res == 2:
         await sendGameBoard(ctx)
-        msg = await ctx.channel.send(f"React to this message to promote piece to\n  :crown:   Queen\n  :european_castle:   Rook\n:church:   Bishop\n  :horse:   Knight")
-        reactions = ["crown", "european_castle", "church", "horse"]
+        msg = await ctx.channel.send(f"React to this message to promote piece to\n  :crown:   Queen\n  :japanese_castle:   Rook\n :church:   Bishop\n  :horse:   Knight")
+        reactions = ["👑", "🏯", "⛪", "🐴"]
         for emoticon in reactions:
             await msg.add_reaction(emoticon)
-        reaction = await bot.wait_for_reaction(reactions,msg)
-        if reaction.emoji == "crown":
+        try:
+            reaction = (await bot.wait_for('reaction_add', check=lambda react, author: author == ctx.author and react.emoji in reactions))[0].emoji
+        except:
+            reaction = "👑"
+        if reaction == "👑":
             current_games[users_busy_playing[ctx.author][1]].promotePawn("queen")
-        elif reaction.emoji == "european_castle":
+        elif reaction == "🏯":
             current_games[users_busy_playing[ctx.author][1]].promotePawn("rook")
-        elif reaction.emoji == "church":
+        elif reaction == "⛪":
             current_games[users_busy_playing[ctx.author][1]].promotePawn("bishop")
-        elif reaction.emoji == "horse":
+        elif reaction.emoji == "🐴":
             current_games[users_busy_playing[ctx.author][1]].promotePawn("knight")
         await sendGameBoard(ctx)
         await ctx.channel.send(f"{users_busy_playing[ctx.author][0].mention}")
@@ -133,7 +136,7 @@ async def playGame(ctx, arg1 : discord.Member = None):
 @bot.command(name="accept")
 async def acceptGame(ctx, arg1 : discord.Member = None):
     if ctx.author in users_busy_playing:
-        await ctx.channel.send(f"Finish you current game first.")
+        await ctx.channel.send(f"Finish your current game first.")
         return
     if arg1 in users_busy_playing:
         await ctx.channel.send(f"{arg1} is busy playing with someone else. Wait your turn.")
