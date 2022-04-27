@@ -34,8 +34,16 @@ class ChessPiece:
                 action = {"moved":[[self, self.loc, "g"+self.loc[1]], [self.board["h"+self.loc[1]], "h"+self.loc[1], "f"+self.loc[1]]], "taken":[]}
             elif pos == "qc":
                 action = {"moved":[[self, self.loc, "c"+self.loc[1]], [self.board["a"+self.loc[1]], "a"+self.loc[1], "d"+self.loc[1]]], "taken":[]}
+            elif "ep" in pos:
+                action = {"moved":[], "taken":[[self.board[pos[2:]], pos[2:]]]}
+                if self.board[pos[2:]].getColor() == "white":
+                    action["moved"].append([self, self.loc, self._addToLocWithNums(pos[2:], [0,-1])])
+                else:
+                    action["moved"].append([self, self.loc, self._addToLocWithNums(pos[2:], [0,1])])
             else:
                 action = {"moved":[[self, self.loc, pos]], "taken":[[self.board[pos],pos]] if self.board.get(pos, None) else []}
+            for piece, loc in action["taken"]:
+                self.board[loc] = None
             for piece, loc, new_loc in action["moved"]:
                 self.board[loc] = None
                 self.board[new_loc] = piece 
@@ -56,7 +64,16 @@ class ChessPiece:
                 return self.castle("king")
             elif pos == "qc":
                 return self.castle("queen")
+            elif "ep" in pos:
+                return self.enPassante(pos)
             else:
+                if self.getPiece() == " pawn" and abs(int(self.loc[1])-int(pos[1])) == 2:
+                    rpawn = self._addToLocWithNums(pos,[1,0])
+                    if self.board.get(rpawn, None) and self.board[rpawn].getName() == self.getOtherColor() + " pawn":
+                        self.board[rpawn].add_ep = pos 
+                    lpawn = self._addToLocWithNums(pos,[-1,0])
+                    if self.board.get(lpawn, None) and self.board[lpawn].getName() == self.getOtherColor() + " pawn":
+                        self.board[lpawn].add_ep = pos 
                 self.board[self.loc] = None
                 self.loc = pos
                 self.board[self.loc] = self 
@@ -64,6 +81,9 @@ class ChessPiece:
                 return self.board, pos
 
     def castle(self, side): # Dummy function for castling
+        pass
+
+    def enPassante(self, pos): # Dummy function for enPassante
         pass
 
     def getPiece(self): # Get piece type
@@ -115,7 +135,6 @@ class ChessPiece:
         (" bishop",[1,1]),(" bishop",[1,-1]),(" bishop",[-1,1]),(" bishop",[-1,-1])]:
             temp_loc = self._addToLocWithNums(loc, shift)
             while temp_loc != "NA":
-                if (loc != "e1"): print("check: ",temp_loc, "king_loc:",loc)
                 switch = self.board.get(temp_loc, None)
                 if switch == None:
                     temp_loc = self._addToLocWithNums(temp_loc, shift)

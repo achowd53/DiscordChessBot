@@ -31,7 +31,7 @@ async def help(ctx):
     message += "  accept user1              Accept challenge from user1\n"
     message += "Game Commands:\n  mv pos1 pos2              Move piece from pos1 to pos2 (Ex: c!mv e2 e3)\n"
     message += "  castle pos1 pos2          Castle a queen/king on pos1 with a rook on pos2\n"
-    message += "  enpassante pos1 pos2      En Passante your pos1 pawn with enemy pos2 pawn\n"
+    message += "  enp pos1 pos2             En Passante your pos1 pawn with enemy pos2 pawn\n"
     message += "  retire                    Forfeit game against opponent```"        
     await ctx.channel.send(message)
 
@@ -109,10 +109,16 @@ async def castle(ctx, arg1, arg2): #king, queen
         return 
     await turnResults(ctx, arg1, arg2)
 
-@bot.command(name="enpassante")
-# have to keep track of last move opponent made for this
+@bot.command(name="enp")
 async def enpassante(ctx, arg1, arg2):
-    pass
+    if ctx.author not in users_busy_playing:
+        await ctx.channel.send("Go start a game first!")
+        return
+    if len(arg1) != 2 or len(arg2) != 2 or not('a' <= arg1[0].lower() <= 'h') or not('a' <= arg2[0].lower() <= 'h') or\
+    not('1' <= arg1[1] <= '8') or not('1' <= arg2[1] <= '8'):
+        await ctx.channel.send("Invalid arguments selected. Use of command: c!castle king/queenPos rookPos")
+        return 
+    await turnResults(ctx, arg1, "ep"+arg2)
 
 @bot.command(name="retire")
 async def retireGame(ctx):

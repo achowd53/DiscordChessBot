@@ -29,8 +29,8 @@ class ChessGame: # En Passante not implemented
         self.king_pos = {"white":"e1","black":"e8"}
         self.board["e1"] = King(loc = "e1", color = "white")
         self.board["e8"] = King(loc = "e8", color = "black")
-        self.board["a1"] = Rook(loc="a1", color="white")
-        self.board["a7"] = Rook(loc="a7", color="white")
+        self.board["b2"] = Pawn(loc="b2", color="white")
+        self.board["c4"] = Pawn(loc="c4", color="black")
         self.updateAllPieces()
 
     def initBoard(self): # Initializes board state
@@ -97,6 +97,8 @@ class ChessGame: # En Passante not implemented
                 self.board, new_pos = self.board[arg1].moveTo("qc")
             elif arg2[0] == "h":
                 self.board, new_pos = self.board[arg1].moveTo("kc")
+        elif piece == " pawn" and len(arg2) > 2:
+            self.board, new_pos = self.board[arg1].moveTo(arg2)
         else: # Normal Move
             self.board, new_pos = self.board[arg1].moveTo(arg2)
         if new_pos == -1: # Move invalid due to check or space was blocked by a piece

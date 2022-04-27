@@ -1,3 +1,4 @@
+from pickle import NONE
 from .piece import ChessPiece
 from .queen import Queen
 from .rook import Rook
@@ -7,6 +8,7 @@ from .bishop import Bishop
 class Pawn(ChessPiece):
     def __init__(self, loc, color):
         self.piece = " pawn"
+        self.add_ep = None
         super().__init__(loc, color)
 
     def promotePawn(self, promoteTo, king_pos): # Promotes pawn and returns board with promoted pawn
@@ -26,7 +28,16 @@ class Pawn(ChessPiece):
         return self.board
 
     def enPassante(self, pos):
-        pass
+        self.board[pos[2:]] = None
+        if self.getColor() == "white":
+            pos = pos[2]+str(int(self.loc[1])+1)
+        else:
+            pos = pos[2]+str(int(self.loc[1])-1)
+        self.board[self.loc] = None
+        self.loc = pos
+        self.board[self.loc] = self 
+        self.num_movements += 1
+        return self.board, pos
 
     def updateValidMoves(self, board: dict, king_pos: str):
         self.board = board
@@ -40,4 +51,7 @@ class Pawn(ChessPiece):
         self.valid_moves.add(self._addToLocWithNums(self.loc, [0,dir]))
         if (self.color == "black" and self.loc[1] == "7") or (self.color == "white" and self.loc[1] == "2"):
             self.valid_moves.add(self._addToLocWithNums(self.loc, [0,dir*2]))
+        if self.add_ep:
+            self.valid_moves.add("ep"+self.add_ep)
+            self.add_ep = None
         return super().updateValidMoves(board, king_pos)
