@@ -7,7 +7,7 @@ import io
 bot = Bot(command_prefix="c!")
 bot.remove_command('help')
 
-TOKEN = "OTM5OTU2NTMwMjEwNTM3NTUy.YgAYvA.-wKa0uqGsYKQdoIvngqLNj8LEB8"
+TOKEN = ""
 current_games = {} # game_hash: Game
 users_busy_playing = {} # userA: (userB, game_hash), userB: (userA, game_hash)
 challenges_in_progress = set() # sorted[(userA, userB)]
